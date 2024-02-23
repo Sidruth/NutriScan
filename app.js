@@ -1,98 +1,66 @@
+import React from 'react';
+import QrReader from 'react-qr-reader'; // Import the QR reader component
+
 function NutriScan() {
-    const [cameraActive, setCameraActive] = React.useState(false);
-    const [nutritionalInfo, setNutritionalInfo] = React.useState(null);
-    const [medicalBackground, setMedicalBackground] = React.useState({
-      allergies: '',
-      conditions: '',
-      preferences: ''
-    });
-    const [prediction, setPrediction] = React.useState('');
-    const handleScan = async (qrCode) => {
-      if (qrCode) {
-        // Simulate fetching nutritional information based on QR code
-        const nutritionData = await window.pythonRun("fetchNutritionalInfoFromQRCode(qrCode)");
-        setNutritionalInfo(nutritionData.result);
-        setCameraActive(false);
+  const [userMedicalData, setUserMedicalData] = React.useState({
+    allergies: '',
+    medicalConditions: '',
+    dietaryPreferences: '',
+  });
+  const [scanResult, setScanResult] = React.useState(null);
+  const [personalizedAdvice, setPersonalizedAdvice] = React.useState('');
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setUserMedicalData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleScanError = (error) => {
+    console.error(error);
+  };
+
+  const handleScan = async (data) => {
+    if (data) {
+      // Assume data is a URL or a string that can be used to fetch food information
+      // For demonstration, we're parsing the scanned data as JSON. In a real app, you might fetch this data from an API.
+      try {
+        const foodData = JSON.parse(data);
+        setScanResult(foodData);
+        await getPersonalizedAdvice(foodData);
+      } catch (error) {
+        console.error('Error parsing QR code data:', error);
       }
-    };
-    const handleInputChange = (e) => {
-      const { name, value } = e.target;
-      setMedicalBackground(prevState => ({
-        ...prevState,
-        [name]: value
-      }));
-    };
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      // Simulate AI prediction based on user's medical background and scanned food item
-      const predictionResult = await ask_language_model(
-        JSON.stringify({ medicalBackground, nutritionalInfo }),
-        "Predict the potential effects of consuming the scanned food item based on the user's medical condition."
-      );
-      setPrediction(predictionResult);
-    };
-    return (
-      <div className="flex flex-col items-center justify-center p-4">
-        <button
-          className="bg-blue-500 text-white p-2 rounded-lg"
-          onClick={() => setCameraActive(!cameraActive)}
-        >
-          {cameraActive ? 'Close Camera' : 'Scan QR Code'}
-        </button>
-        {cameraActive && (
-          <Camera
-            onScan={handleScan}
-            facingMode="environment"
-            idealResolution={{ width: 200, height: 200 }}
-          />
-        )}
-        <div className="my-4">
-          {nutritionalInfo && (
-            <div>
-              <h2 className="text-lg font-bold">Nutritional Information</h2>
-              <p>Macronutrients: {nutritionalInfo.macronutrients}</p>
-              <p>Vitamins: {nutritionalInfo.vitamins}</p>
-              <p>Minerals: {nutritionalInfo.minerals}</p>
-              <p>Allergens: {nutritionalInfo.allergens}</p>
-            </div>
-          )}
-        </div>
-        <form onSubmit={handleSubmit} className="w-full max-w-sm">
-          <div className="md:flex md:items-center mb-6">
-            <div className="md:w-1/3">
-              <label className="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                Allergies
-              </label>
-            </div>
-            <div className="md:w-2/3">
-              <input
-                className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-                type="text"
-                name="allergies"
-                value={medicalBackground.allergies}
-                onChange={handleInputChange}
-              />
-            </div>
-          </div>
-          {/* Repeat the above input for 'conditions' and 'preferences' with appropriate labels and names */}
-          <div className="md:flex md:items-center">
-            <div className="md:w-1/3"></div>
-            <div className="md:w-2/3">
-              <button
-                className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
-                type="submit"
-              >
-                Get Recommendation
-              </button>
-            </div>
-          </div>
-        </form>
-        {prediction && (
-          <div className="my-4 p-4 border rounded">
-            <h2 className="text-lg font-bold">AI Prediction</h2>
-            <p>{prediction}</p>
-          </div>
-        )}
+    }
+  };
+
+  const getPersonalizedAdvice = async (foodData) => {
+    // Implement fetching personalized advice based on foodData and userMedicalData
+    const advice = 'Based on your medical conditions, consuming this product is safe.';
+    setPersonalizedAdvice(advice);
+  };
+
+  return (
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">NutriScan</h1>
+      {/* Input fields for allergies, medical conditions, and dietary preferences */}
+      
+      {/* QR Code Scanner */}
+      <div className="mb-4">
+        <QrReader
+          delay={300}
+          onError={handleScanError}
+          onScan={handleScan}
+          style={{ width: '100%' }}
+        />
+        <p>Scan a QR code to get started.</p>
       </div>
-    );
-  }
+
+      {/* Display scan result and personalized advice */}
+    </div>
+  );
+}
+
+export default NutriScan;
