@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriScan</title>
+    <!-- Link to your external CSS file, if you have any -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>NutriScan App</h1>
+
+    <!-- Container for the camera view or QR code scanner -->
+    <div id="camera-view">
+        <video id="video" width="640" height="480" autoplay></video>
+        <button id="scan-btn">Scan QR Code</button>
+    </div>
+
+    <!-- Form for entering medical background information -->
+    <form id="user-info">
+        <h2>Enter Your Medical Background</h2>
+        <input type="text" id="allergies" placeholder="Allergies">
+        <input type="text" id="conditions" placeholder="Medical Conditions">
+        <input type="text" id="preferences" placeholder="Dietary Preferences">
+        <button type="submit">Submit</button>
+    </form>
+
+    <!-- Container to display the nutritional information -->
+    <div id="nutritional-info">
+        <h2>Nutritional Information</h2>
+        <!-- Placeholder elements for nutritional data -->
+        <p id="macros"></p>
+        <p id="vitamins"></p>
+        <p id="allergen-info"></p>
+    </div>
+
+    <!-- Link to your external JavaScript file -->
+    <script src="app.js"></script>
+</body>
+</html>
